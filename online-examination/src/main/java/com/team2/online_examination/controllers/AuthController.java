@@ -1,5 +1,6 @@
 package com.team2.online_examination.controllers;
 
+import com.team2.online_examination.dtos.LoginRequest;
 import com.team2.online_examination.models.Teacher;
 import com.team2.online_examination.services.TeacherService;
 import com.team2.online_examination.utils.JwtUtil;
@@ -30,10 +31,14 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestParam String email, @RequestParam String password) {
+    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+        String email = loginRequest.getEmail();
+        String password = loginRequest.getPassword();
+
         Authentication auth = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(email, password)
         );
+
         String token = jwtUtil.generateToken(email);
         return ResponseEntity.ok(Map.of("token", token));
     }
