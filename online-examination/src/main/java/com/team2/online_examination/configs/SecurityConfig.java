@@ -27,7 +27,7 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable) // Disable CSRF protection
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/api/auth/**").permitAll() // Allow public access to authentication endpoints
+                        .requestMatchers("/api/v1/**").permitAll() // Allow public access to authentication endpoints
                         .anyRequest().authenticated() // All other endpoints require authentication
                 );
 
