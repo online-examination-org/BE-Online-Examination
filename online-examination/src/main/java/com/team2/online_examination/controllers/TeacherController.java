@@ -10,20 +10,26 @@ import com.team2.online_examination.exceptions.EmailExistedException;
 import com.team2.online_examination.mappers.TeacherMapper;
 import com.team2.online_examination.models.Teacher;
 import com.team2.online_examination.services.TeacherService;
+import com.team2.online_examination.services.ExamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.team2.online_examination.models.Exam;
 
+import java.util.List;
 @RestController
+
 @RequestMapping("/api/v1/teachers")
 public class TeacherController {
 
     private final TeacherService teacherService;
+    private final ExamService examService;
 
     @Autowired
-    public TeacherController(TeacherService teacherService) {
+    public TeacherController(TeacherService teacherService,ExamService examService) {
         this.teacherService = teacherService;
+        this.examService = examService;
     }
 
     @PostMapping("/signup")
@@ -64,6 +70,12 @@ public class TeacherController {
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new GeneralErrorResponse(e.getMessage()));
         }
+    }
+
+    @GetMapping("/exams")
+    public List<Exam> getExamsByTeacherId() {
+        Long teacherId=1L;
+        return this.examService.getListExamByTeacherId(teacherId);
     }
 }
 
