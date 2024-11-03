@@ -1,6 +1,7 @@
 package com.team2.online_examination.controllers;
 
 import com.team2.online_examination.annotations.Authorize;
+import com.team2.online_examination.contexts.TeacherContext;
 import com.team2.online_examination.contexts.UserContext;
 import com.team2.online_examination.dtos.JwtPayload;
 import com.team2.online_examination.dtos.requests.ExamCreateRequest;
@@ -27,10 +28,8 @@ public class ExamController {
     @PostMapping("/add")
     public ResponseEntity<?> addExam(@RequestBody @Valid ExamCreateRequest examCreateRequest) {
         try {
-            JwtPayload payload = UserContext.getJwtPayload();
-            Integer teacherId = (Integer) payload.getClaims().get("id");
-            Long idLong = teacherId.longValue();
-            this.examService.createExam(examCreateRequest, idLong);
+            TeacherContext teacherContext = UserContext.getUserAs(TeacherContext.class);
+            this.examService.createExam(examCreateRequest, teacherContext.getId());
             return ResponseEntity.ok("Exam created successfully");
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(e.getMessage());
@@ -45,10 +44,8 @@ public class ExamController {
             if(id == null){
                 return ResponseEntity.badRequest().body("Id is required");
             }
-            JwtPayload payload = UserContext.getJwtPayload();
-            Integer teacherId = (Integer) payload.getClaims().get("id");
-            Long idLong = teacherId.longValue();
-            this.examService.updateExam(examUpdateRequest, idLong,id);
+            TeacherContext teacherContext = UserContext.getUserAs(TeacherContext.class);
+            this.examService.updateExam(examUpdateRequest, teacherContext.getId(),id);
             return ResponseEntity.ok("Exam updated successfully");
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(e.getMessage());
