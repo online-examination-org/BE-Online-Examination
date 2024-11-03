@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@SecurityRequirement(name = "Bearer Authentication")
 @RestController
 @RequestMapping("/api/v1/exams")
 public class ExamController {
@@ -23,13 +22,15 @@ public class ExamController {
     public ExamController(ExamService examService) {
         this.examService = examService;
     }
+    @SecurityRequirement(name = "Bearer Authentication")
     @Authorize(roles = {"teacher"})
     @PostMapping("/add")
     public ResponseEntity<?> addExam(@RequestBody @Valid ExamCreateRequest examCreateRequest) {
         try {
             JwtPayload payload = UserContext.getJwtPayload();
-            System.out.println(payload.getClaims().get("id"));
-            //this.examService.createExam(examCreateRequest, (Long) payload.getClaims().get("id"));
+            Integer teacherId = (Integer) payload.getClaims().get("id");
+            Long idLong = teacherId.longValue();
+            this.examService.createExam(examCreateRequest, idLong);
             return ResponseEntity.ok("Exam created successfully");
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(e.getMessage());
@@ -37,10 +38,17 @@ public class ExamController {
     }
 
     @SecurityRequirement(name = "Bearer Authentication")
+    @Authorize(roles = {"teacher"})
     @PutMapping("/update")
-    public ResponseEntity<?> updateExam(@RequestBody @Valid ExamUpdateRequest examUpdateRequest, @RequestParam @NotNull(message = "Id is required") Long id) {
+    public ResponseEntity<?> updateExam(@RequestBody ExamUpdateRequest examUpdateRequest, @RequestParam("id") Long id) {
         try {
-            this.examService.updateExam(examUpdateRequest, 1L,id);
+            if(id == null){
+                return ResponseEntity.badRequest().body("Id is required");
+            }
+            JwtPayload payload = UserContext.getJwtPayload();
+            Integer teacherId = (Integer) payload.getClaims().get("id");
+            Long idLong = teacherId.longValue();
+            this.examService.updateExam(examUpdateRequest, idLong,id);
             return ResponseEntity.ok("Exam updated successfully");
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(e.getMessage());

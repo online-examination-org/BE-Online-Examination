@@ -9,6 +9,7 @@ import com.team2.online_examination.models.Exam;
 import com.team2.online_examination.models.Teacher;
 import com.team2.online_examination.repositories.ExamRepository;
 import com.team2.online_examination.repositories.TeacherRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -18,6 +19,7 @@ public class ExamService {
     private final ExamRepository examRepository;
     private final TeacherRepository teacherRepository;
 
+    @Autowired
     public ExamService(ExamRepository examRepository, TeacherRepository teacherRepository) {
         this.examRepository = examRepository;
         this.teacherRepository = teacherRepository;
@@ -32,6 +34,7 @@ public class ExamService {
         );
         exam.setPasscode(randomCode());
         exam.setTeacher(teacher);
+        exam.setIsActive(true);
         examRepository.save(exam);
     }
     public void updateExam(ExamUpdateRequest examUpdateRequest, Long teacherId,Long id) throws NotFoundException {
