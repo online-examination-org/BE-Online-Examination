@@ -75,8 +75,25 @@ public class TeacherController {
     @PostMapping("/authorize")
     public ResponseEntity<?> authorize () {
         try {
-//            JwtPayload payload = UserContext.getJwtPayload();
             TeacherContext teacher = UserContext.getUserAs(TeacherContext.class);
+            return ResponseEntity.ok(teacher);
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new GeneralErrorResponse(e.getMessage()));
+        }
+    }
+
+    @Authorize(roles = {"teacher"})
+    @GetMapping("/info")
+    public ResponseEntity<?> getInfo () {
+        try {
+            TeacherContext teacher = UserContext.getUserAs(TeacherContext.class);
+            if (teacher == null) {
+                return ResponseEntity
+                        .status(HttpStatus.NOT_FOUND)
+                        .body(new GeneralErrorResponse("User not found"));
+            }
             return ResponseEntity.ok(teacher);
         } catch (Exception e) {
             return ResponseEntity
