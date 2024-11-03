@@ -75,8 +75,12 @@ public class TeacherService {
             // Generate tokens
             TeacherJwtPayload teacherJwtPayload = TeacherMapper.INSTANCE.toTeacherJwtPayload(teacher);
             JwtPayload payload = new JwtPayload(teacherJwtPayload);
+            JwtToken token = jwtUtil.generateToken(payload);
 
-            return jwtUtil.generateToken(payload);
+            // Add role
+            token.setRole(teacherJwtPayload.getRole());
+
+            return token;
 
         } catch (AuthenticationException e) {
             throw new AuthenticationFailureException("Invalid email or password");
