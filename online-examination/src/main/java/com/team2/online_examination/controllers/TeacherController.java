@@ -1,5 +1,8 @@
 package com.team2.online_examination.controllers;
 
+import com.team2.online_examination.annotations.Authorize;
+import com.team2.online_examination.contexts.UserContext;
+import com.team2.online_examination.dtos.JwtPayload;
 import com.team2.online_examination.dtos.requests.TeacherLoginRequest;
 import com.team2.online_examination.dtos.requests.TeacherCreateRequest;
 import com.team2.online_examination.dtos.responses.GeneralErrorResponse;
@@ -76,6 +79,19 @@ public class TeacherController {
     public List<Exam> getExamsByTeacherId() {
         Long teacherId=1L;
         return this.examService.getListExamByTeacherId(teacherId);
+    }
+
+    @Authorize(roles = {"teacher"})
+    @PostMapping("/authorize")
+    public ResponseEntity<?> authorize () {
+        try {
+            JwtPayload payload = UserContext.getJwtPayload();
+            return ResponseEntity.ok(payload.getClaims());
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new GeneralErrorResponse(e.getMessage()));
+        }
     }
 }
 
