@@ -11,8 +11,6 @@ import java.util.List;
 import java.util.Optional;
 @Repository
 public interface QuestionRepository extends JpaRepository<Question, Long> {
-    @Query(value = "SELECT s FROM question s WHERE s.exam.exam_id = :exam_id")
-    List<Question> findAllByExamId(Long exam_id);
-    @Query(value = "SELECT s FROM question s WHERE s.question_id = :questionId")
-    List<Question> findAllByQuestionId(long questionId);
+    List<Question> findAllByExam_ExamId(Long exam_id);
+    Optional<Question> findByQuestionId(Long questionId);
 }
