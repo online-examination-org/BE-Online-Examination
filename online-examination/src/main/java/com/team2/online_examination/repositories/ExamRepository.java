@@ -10,6 +10,5 @@ import java.util.Optional;
 @Repository
 public interface ExamRepository extends JpaRepository<Exam, Long> {
     List<Exam> findByTeacher_Id(Long teacherId);
-
     Optional<Exam> findByPasscode(String passcode);
 }

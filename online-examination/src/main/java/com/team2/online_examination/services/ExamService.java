@@ -1,22 +1,62 @@
 package com.team2.online_examination.services;
 
-import com.team2.online_examination.repositories.ExamRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import com.github.f4b6a3.uuid.UuidCreator;
+import com.team2.online_examination.dtos.requests.ExamCreateRequest;
+import com.team2.online_examination.dtos.requests.ExamUpdateRequest;
+import com.team2.online_examination.exceptions.NotFoundException;
+import com.team2.online_examination.mappers.ExamMapper;
 import com.team2.online_examination.models.Exam;
+import com.team2.online_examination.models.Teacher;
+import com.team2.online_examination.repositories.ExamRepository;
+import com.team2.online_examination.repositories.TeacherRepository;
+import org.springframework.stereotype.Service;
+
+import java.util.UUID;
+
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class ExamService {
-
     private final ExamRepository examRepository;
+    private final TeacherRepository teacherRepository;
 
-    @Autowired
-    public ExamService(
-            ExamRepository examRepository
-    ) {
+    public ExamService(ExamRepository examRepository, TeacherRepository teacherRepository) {
         this.examRepository = examRepository;
+        this.teacherRepository = teacherRepository;
+    }
+    public String randomCode(){
+        return UuidCreator.getTimeBased().toString().substring(0,6);
+    }
+
+    public void createExam(ExamCreateRequest examCreateRequest, Long teacherId) throws NotFoundException {
+        Exam exam = ExamMapper.INSTANCE.toExam(examCreateRequest);
+        Teacher teacher = teacherRepository.findById(teacherId).orElseThrow(
+                () -> new NotFoundException("Teacher not found with id: " + teacherId)
+        );
+        exam.setPasscode(randomCode());
+        exam.setTeacher(teacher);
+        examRepository.save(exam);
+    }
+
+    public void updateExam(ExamUpdateRequest examUpdateRequest, Long teacherId,Long id) throws NotFoundException {
+        Exam updateExam = ExamMapper.INSTANCE.toExam(examUpdateRequest);
+        Exam exam = examRepository.findById(id).orElseThrow(
+                () -> new NotFoundException("Exam not found with id: " + id)
+        );
+        Teacher teacher = teacherRepository.findById(teacherId).orElseThrow(
+                () -> new NotFoundException("Teacher not found with id: " + teacherId)
+        );
+        if(!exam.getTeacher().getId().equals(teacherId)){
+            throw new NotFoundException("Teacher not found");
+        }
+        exam.setDuration(updateExam.getDuration()!=null?updateExam.getDuration():exam.getDuration());
+        exam.setStartTime(updateExam.getStartTime()!=null?updateExam.getStartTime():exam.getStartTime());
+        exam.setEndTime(updateExam.getEndTime()!=null?updateExam.getEndTime():exam.getEndTime());
+        exam.setTitle(updateExam.getTitle()!=null?updateExam.getTitle():exam.getTitle());
+        exam.setIsActive(updateExam.getIsActive()!=null?updateExam.getIsActive():exam.getIsActive());
+        exam.setDescription(updateExam.getDescription()!=null?updateExam.getDescription():exam.getDescription());
+        examRepository.save(exam);
     }
 
     public List<Exam> getListExamByTeacherId(Long teacherId) {
@@ -26,7 +66,5 @@ public class ExamService {
     public Optional<Exam> getExamByPasscode(String passcode) {
         return examRepository.findByPasscode(passcode);
     }
+
 }
-
-
-

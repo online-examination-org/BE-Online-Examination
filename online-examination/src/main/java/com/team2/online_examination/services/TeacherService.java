@@ -2,7 +2,7 @@ package com.team2.online_examination.services;
 
 import com.team2.online_examination.dtos.JwtPayload;
 import com.team2.online_examination.dtos.TeacherJwtPayload;
-import com.team2.online_examination.dtos.responses.JwtToken;
+import com.team2.online_examination.dtos.JwtToken;
 import com.team2.online_examination.exceptions.AuthenticationFailureException;
 import com.team2.online_examination.exceptions.EmailExistedException;
 import com.team2.online_examination.mappers.TeacherMapper;

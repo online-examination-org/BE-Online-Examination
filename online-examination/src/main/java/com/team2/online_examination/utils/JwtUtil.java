@@ -1,7 +1,7 @@
 package com.team2.online_examination.utils;
 
 import com.team2.online_examination.dtos.JwtPayload;
-import com.team2.online_examination.dtos.responses.JwtToken;
+import com.team2.online_examination.dtos.JwtToken;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;

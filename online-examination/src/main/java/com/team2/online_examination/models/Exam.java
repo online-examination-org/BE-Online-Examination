@@ -10,6 +10,8 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 @Getter
 @Setter
 @Data
+@Getter
+@Setter
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
@@ -37,4 +39,6 @@ public class Exam extends BaseModel {
     @JoinColumn(name = "teacher_id", nullable = false)
     private Teacher teacher;
 
+    @Column(name = "is_active", nullable = false,columnDefinition = "boolean default false")
+    private Boolean isActive;
 }
