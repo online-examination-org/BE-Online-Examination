@@ -11,9 +11,9 @@ public interface ExamMapper {
     ExamMapper INSTANCE = Mappers.getMapper(ExamMapper.class);
 
     Exam toExam(ExamCreateRequest request);
-    ExamCreateRequest toExamCreateRequest(Exam exam);
+    //ExamCreateRequest toExamCreateRequest(Exam exam);
 
     Exam toExam(ExamUpdateRequest examUpdateRequest);
-    ExamUpdateRequest toExamUpdateRequest(Exam exam);
+    //SExamUpdateRequest toExamUpdateRequest(Exam exam);
 
 }

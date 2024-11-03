@@ -1,5 +1,6 @@
 package com.team2.online_examination.services;
 
+import com.github.f4b6a3.uuid.UuidCreator;
 import com.team2.online_examination.dtos.requests.ExamCreateRequest;
 import com.team2.online_examination.dtos.requests.ExamUpdateRequest;
 import com.team2.online_examination.exceptions.NotFoundException;
@@ -10,6 +11,8 @@ import com.team2.online_examination.repositories.ExamRepository;
 import com.team2.online_examination.repositories.TeacherRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 public class ExamService {
     private final ExamRepository examRepository;
@@ -19,19 +22,22 @@ public class ExamService {
         this.examRepository = examRepository;
         this.teacherRepository = teacherRepository;
     }
-
+    public String randomCode(){
+        return UuidCreator.getTimeBased().toString().substring(0,6);
+    }
     public void createExam(ExamCreateRequest examCreateRequest, Long teacherId) throws NotFoundException {
         Exam exam = ExamMapper.INSTANCE.toExam(examCreateRequest);
         Teacher teacher = teacherRepository.findById(teacherId).orElseThrow(
                 () -> new NotFoundException("Teacher not found with id: " + teacherId)
         );
+        exam.setPasscode(randomCode());
         exam.setTeacher(teacher);
         examRepository.save(exam);
     }
-    public void updateExam(ExamUpdateRequest examUpdateRequest, Long teacherId,String passcode) throws NotFoundException {
+    public void updateExam(ExamUpdateRequest examUpdateRequest, Long teacherId,Long id) throws NotFoundException {
         Exam updateExam = ExamMapper.INSTANCE.toExam(examUpdateRequest);
-        Exam exam = examRepository.findByPasscode(passcode).orElseThrow(
-                () -> new NotFoundException("Exam not found with passcode: " + passcode)
+        Exam exam = examRepository.findById(id).orElseThrow(
+                () -> new NotFoundException("Exam not found with id: " + id)
         );
         Teacher teacher = teacherRepository.findById(teacherId).orElseThrow(
                 () -> new NotFoundException("Teacher not found with id: " + teacherId)
