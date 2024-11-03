@@ -29,6 +29,9 @@ public class ExamController {
     public ResponseEntity<?> addExam(@RequestBody @Valid ExamCreateRequest examCreateRequest) {
         try {
             TeacherContext teacherContext = UserContext.getUserAs(TeacherContext.class);
+            if(teacherContext == null){
+                return ResponseEntity.badRequest().body("Teacher context is required");
+            }
             this.examService.createExam(examCreateRequest, teacherContext.getId());
             return ResponseEntity.ok("Exam created successfully");
         } catch (Exception e) {
@@ -45,6 +48,9 @@ public class ExamController {
                 return ResponseEntity.badRequest().body("Id is required");
             }
             TeacherContext teacherContext = UserContext.getUserAs(TeacherContext.class);
+            if(teacherContext == null){
+                return ResponseEntity.badRequest().body("Teacher context is required");
+            }
             this.examService.updateExam(examUpdateRequest, teacherContext.getId(),id);
             return ResponseEntity.ok("Exam updated successfully");
         } catch (Exception e) {
