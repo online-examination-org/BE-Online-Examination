@@ -52,7 +52,7 @@ public class JwtUtil {
         return jwtToken;
     }
 
-    public JwtPayload extractPayload(String token) {
+    public JwtPayload verifyToken(String token) {
         Claims claims = Jwts.parser()
                 .verifyWith(secretKey)
                 .build()
