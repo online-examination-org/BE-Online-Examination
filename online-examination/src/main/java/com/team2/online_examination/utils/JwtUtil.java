@@ -21,6 +21,12 @@ public class JwtUtil {
     @Value("${jwt.secret-access-token}")
     private String secret;
 
+    @Value("${jwt.expire-access-token}")
+    private int accessTokenExpiredInDays;
+
+    @Value("${jwt.expire-refresh-token}")
+    private int refreshTokenExpiredInDays;
+
     @PostConstruct
     private void init() {
         if (secret.length() < 32) {
@@ -31,17 +37,19 @@ public class JwtUtil {
 
     public JwtToken generateToken(JwtPayload payload) {
         Map<String, Object> claims = payload.getClaims();
+        long now = System.currentTimeMillis();
+
         String accessToken = Jwts.builder()
                 .claims(claims)
-                .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + 24 * 60 * 60 * 1000))
+                .issuedAt(new Date(now))
+                .expiration(new Date(now + TimeUtil.daysToMilliseconds((accessTokenExpiredInDays))))
                 .signWith(secretKey)
                 .compact();
 
         String refreshToken = Jwts.builder()
                 .claims(claims)
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + 30 * 24 * 60 * 60 * 1000))
+                .expiration(new Date(System.currentTimeMillis() + TimeUtil.daysToMilliseconds(refreshTokenExpiredInDays)))
                 .signWith(secretKey)
                 .compact();
 
@@ -52,7 +60,7 @@ public class JwtUtil {
         return jwtToken;
     }
 
-    public JwtPayload extractPayload(String token) {
+    public JwtPayload verifyToken(String token) {
         Claims claims = Jwts.parser()
                 .verifyWith(secretKey)
                 .build()

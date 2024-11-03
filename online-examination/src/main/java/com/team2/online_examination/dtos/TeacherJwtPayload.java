@@ -11,4 +11,5 @@ public class TeacherJwtPayload {
     private Long id;
     private String name;
     private String email;
+    private final String role = "teacher";
 }
