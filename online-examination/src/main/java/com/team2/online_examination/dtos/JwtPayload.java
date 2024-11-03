@@ -36,4 +36,52 @@ public class JwtPayload {
             }
         }
     }
+
+    public <T> T toObject(Class<T> clazz) {
+        try {
+            T instance = clazz.getDeclaredConstructor().newInstance();
+            for (Map.Entry<String, Object> entry : claims.entrySet()) {
+                Field field;
+                try {
+                    field = clazz.getDeclaredField(entry.getKey());
+                    field.setAccessible(true);
+
+                    Object value = entry.getValue();
+                    if (value != null && !field.getType().isInstance(value)) {
+                        // Convert the value if it’s a different type than the field
+                        value = convertType(value, field.getType());
+                    }
+
+                    field.set(instance, value);
+                } catch (NoSuchFieldException e) {
+                    System.out.println("Field " + entry.getKey() + " not found in " + clazz.getSimpleName());
+                }
+            }
+            return instance;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private Object convertType(Object value, Class<?> targetType) {
+        if (value instanceof Integer) {
+            if (targetType == Long.class || targetType == long.class) {
+                return ((Integer) value).longValue();
+            } else if (targetType == Double.class || targetType == double.class) {
+                return ((Integer) value).doubleValue();
+            } else if (targetType == Float.class || targetType == float.class) {
+                return ((Integer) value).floatValue();
+            }
+        } else if (value instanceof Long) {
+            if (targetType == Integer.class || targetType == int.class) {
+                return ((Long) value).intValue();
+            }
+        } else if (value instanceof Double) {
+            if (targetType == Float.class || targetType == float.class) {
+                return ((Double) value).floatValue();
+            }
+        }
+        return value; // Return the original value if no conversion is necessary
+    }
 }

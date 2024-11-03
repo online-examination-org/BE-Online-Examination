@@ -1,12 +1,14 @@
 package com.team2.online_examination.controllers;
 
 import com.team2.online_examination.annotations.Authorize;
+import com.team2.online_examination.contexts.TeacherContext;
 import com.team2.online_examination.contexts.UserContext;
 import com.team2.online_examination.dtos.JwtPayload;
+import com.team2.online_examination.dtos.TeacherJwtPayload;
 import com.team2.online_examination.dtos.requests.TeacherLoginRequest;
 import com.team2.online_examination.dtos.requests.TeacherCreateRequest;
-import com.team2.online_examination.dtos.responses.GeneralErrorResponse;
-import com.team2.online_examination.dtos.responses.JwtToken;
+import com.team2.online_examination.exceptions.GeneralErrorResponse;
+import com.team2.online_examination.dtos.JwtToken;
 import com.team2.online_examination.dtos.responses.TeacherCreateResponse;
 import com.team2.online_examination.exceptions.AuthenticationFailureException;
 import com.team2.online_examination.exceptions.EmailExistedException;
@@ -73,8 +75,9 @@ public class TeacherController {
     @PostMapping("/authorize")
     public ResponseEntity<?> authorize () {
         try {
-            JwtPayload payload = UserContext.getJwtPayload();
-            return ResponseEntity.ok(payload.getClaims());
+//            JwtPayload payload = UserContext.getJwtPayload();
+            TeacherContext teacher = UserContext.getUserAs(TeacherContext.class);
+            return ResponseEntity.ok(teacher);
         } catch (Exception e) {
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
