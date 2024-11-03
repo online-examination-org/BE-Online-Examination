@@ -1,16 +1,15 @@
 package com.team2.online_examination.models;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 @Entity
 @Data
+@Getter
+@Setter
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
@@ -38,4 +37,6 @@ public class Exam extends BaseModel {
     @JoinColumn(name = "teacher_id", nullable = false)
     private Teacher teacher;
 
+    @Column(name = "is_active", nullable = false,columnDefinition = "boolean default false")
+    private Boolean isActive;
 }
