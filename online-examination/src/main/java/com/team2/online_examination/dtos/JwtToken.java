@@ -1,4 +1,4 @@
-package com.team2.online_examination.dtos.responses;
+package com.team2.online_examination.dtos;
 
 import lombok.Data;
 

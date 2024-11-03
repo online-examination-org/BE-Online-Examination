@@ -16,4 +16,12 @@ public class UserContext {
     public static void clear() {
         userContext.remove();
     }
+
+    public static <T> T getUserAs(Class<T> clazz) {
+        JwtPayload payload = userContext.get();
+        if (payload == null) {
+            return null;
+        }
+        return payload.toObject(clazz);
+    }
 }
