@@ -29,7 +29,7 @@ public class ExamController {
         try {
             JwtPayload payload = UserContext.getJwtPayload();
             System.out.println(payload.getClaims().get("id"));
-            //this.examService.createExam(examCreateRequest, (Long) payload.getClaims().get("id"));
+            this.examService.createExam(examCreateRequest, (Long) payload.getClaims().get("id"));
             return ResponseEntity.ok("Exam created successfully");
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(e.getMessage());

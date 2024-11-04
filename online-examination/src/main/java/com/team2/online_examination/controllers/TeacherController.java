@@ -77,10 +77,13 @@ public class TeacherController {
         }
     }
 
+    @Authorize(roles = {"teacher"})
     @GetMapping("/exams")
-    public List<Exam> getExamsByTeacherId() {
-        Long teacherId=1L;
-        return this.examService.getListExamByTeacherId(teacherId);
+    public ResponseEntity<?> getExamsByTeacherId() {
+        TeacherContext teacher = UserContext.getUserAs(TeacherContext.class);
+        Long teacher_id= teacher.getId();
+        List <Exam> exams=  this.examService.getListExamByTeacherId(teacher_id);
+        return ResponseEntity.ok(exams);
     }
 
     @Authorize(roles = {"teacher"})

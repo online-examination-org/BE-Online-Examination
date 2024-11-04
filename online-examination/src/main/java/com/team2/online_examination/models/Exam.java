@@ -10,8 +10,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 @Getter
 @Setter
 @Data
-@Getter
-@Setter
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
