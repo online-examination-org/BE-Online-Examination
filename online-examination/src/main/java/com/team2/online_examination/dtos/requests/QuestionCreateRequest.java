@@ -25,7 +25,6 @@ public class QuestionCreateRequest {
     @NotBlank(message = "Answer is required")
     String answer;
 
-    @NotBlank(message = "Choices is required")
     Map<String,String> choices;
 
 }

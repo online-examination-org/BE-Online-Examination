@@ -71,7 +71,7 @@ public class QuestionService {
         question.setQuestionText(updateQuestion.getQuestionText()!=null? updateQuestion.getQuestionText() : question.getQuestionText());
         question.setQuestionType(updateQuestion.getQuestionType()!=null? updateQuestion.getQuestionType() : question.getQuestionType());
         question.setAnswer(updateQuestion.getAnswer()!=null? updateQuestion.getAnswer() : question.getAnswer());
-        question.setChoices(updateQuestion.getChoices()!=null? updateQuestion.getChoices() : question.getChoices());
+        question.setChoices(updateQuestion.getChoices());
 
         questionRepository.save(question);
     }
