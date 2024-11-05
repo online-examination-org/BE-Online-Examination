@@ -2,6 +2,8 @@ package com.team2.online_examination.controllers;
 
 import com.team2.online_examination.dtos.requests.ExamResultCreateRequest;
 import com.team2.online_examination.dtos.requests.ExamResultUpdateRequest;
+import com.team2.online_examination.exceptions.BadRequestException;
+import com.team2.online_examination.exceptions.NotFoundException;
 import com.team2.online_examination.services.ExamResultService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +26,12 @@ public class ExamResultController {
             return ResponseEntity.ok(examResultService.addExamResult(examResultCreateRequest));
         }
         catch (Exception e){
+            if(e instanceof NotFoundException){
+                return ResponseEntity.badRequest().body(e.getMessage());
+            }
+            else if(e instanceof BadRequestException){
+                return ResponseEntity.badRequest().body(e.getMessage());
+            }
             return ResponseEntity.internalServerError().body(e.getMessage());
         }
     }
@@ -37,6 +45,12 @@ public class ExamResultController {
             return ResponseEntity.ok(examResultService.accessExam(examResultUpdateRequest, id));
         }
         catch (Exception e){
+            if(e instanceof NotFoundException){
+                return ResponseEntity.badRequest().body(e.getMessage());
+            }
+            else if(e instanceof BadRequestException){
+                return ResponseEntity.badRequest().body(e.getMessage());
+            }
             return ResponseEntity.internalServerError().body(e.getMessage());
         }
     }

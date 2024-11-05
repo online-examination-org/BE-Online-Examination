@@ -6,6 +6,8 @@ import com.team2.online_examination.contexts.UserContext;
 import com.team2.online_examination.dtos.JwtPayload;
 import com.team2.online_examination.dtos.requests.ExamCreateRequest;
 import com.team2.online_examination.dtos.requests.ExamUpdateRequest;
+import com.team2.online_examination.exceptions.BadRequestException;
+import com.team2.online_examination.exceptions.NotFoundException;
 import com.team2.online_examination.services.ExamService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
@@ -34,6 +36,12 @@ public class ExamController {
             }
             return ResponseEntity.ok(this.examService.createExam(examCreateRequest, teacherContext.getId()));
         } catch (Exception e) {
+            if(e instanceof NotFoundException){
+                return ResponseEntity.badRequest().body(e.getMessage());
+            }
+            else if(e instanceof BadRequestException){
+                return ResponseEntity.badRequest().body(e.getMessage());
+            }
             return ResponseEntity.internalServerError().body(e.getMessage());
         }
     }
@@ -53,6 +61,12 @@ public class ExamController {
             this.examService.updateExam(examUpdateRequest, teacherContext.getId(),id);
             return ResponseEntity.ok("Exam updated successfully");
         } catch (Exception e) {
+            if(e instanceof NotFoundException){
+                return ResponseEntity.badRequest().body(e.getMessage());
+            }
+            else if(e instanceof BadRequestException){
+                return ResponseEntity.badRequest().body(e.getMessage());
+            }
             return ResponseEntity.internalServerError().body(e.getMessage());
         }
     }

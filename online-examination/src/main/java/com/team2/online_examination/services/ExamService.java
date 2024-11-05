@@ -52,8 +52,6 @@ public class ExamService {
         if (exam.getStartTime().isAfter(LocalDateTime.now())) {
             throw new NotFoundException("Exam is already started");
         }
-        Teacher teacher = teacherRepository.findById(teacherId).orElseThrow(
-                () -> new NotFoundException("Teacher not found with id: " + teacherId));
         if (!exam.getTeacher().getId().equals(teacherId)) {
             throw new NotFoundException("Teacher not found");
         }
