@@ -32,8 +32,7 @@ public class ExamController {
             if(teacherContext == null){
                 return ResponseEntity.badRequest().body("Teacher context is required");
             }
-            this.examService.createExam(examCreateRequest, teacherContext.getId());
-            return ResponseEntity.ok("Exam created successfully");
+            return ResponseEntity.ok(this.examService.createExam(examCreateRequest, teacherContext.getId()));
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(e.getMessage());
         }

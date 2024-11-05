@@ -20,10 +20,16 @@ import org.springframework.context.annotation.Configuration;
                 termsOfService = "https://www.google.com",
                 description = "API for Online Examination "
         ),
-        servers = @Server(
-                url = "https://online-examination-latest.onrender.com/",
-                description = "Online examination"
-        )
+        servers = {
+                @Server(
+                        url = "https://online-examination-latest.onrender.com",
+                        description = "Online examination host server"
+                ),
+                @Server(
+                        url = "http://localhost:8089",
+                        description = "Online examination local server"
+                )
+        }
 )
 @SecurityScheme(
         name = "Bearer Authentication",
