@@ -15,20 +15,27 @@ import com.team2.online_examination.exceptions.EmailExistedException;
 import com.team2.online_examination.mappers.TeacherMapper;
 import com.team2.online_examination.models.Teacher;
 import com.team2.online_examination.services.TeacherService;
+import com.team2.online_examination.services.ExamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+import com.team2.online_examination.models.Exam;
 
+import java.util.List;
 @RestController
+
 @RequestMapping("/api/v1/teachers")
 public class TeacherController {
 
     private final TeacherService teacherService;
+    private final ExamService examService;
 
     @Autowired
-    public TeacherController(TeacherService teacherService) {
+    public TeacherController(TeacherService teacherService,ExamService examService) {
         this.teacherService = teacherService;
+        this.examService = examService;
     }
 
     @PostMapping("/signup")
@@ -72,11 +79,25 @@ public class TeacherController {
     }
 
     @Authorize(roles = {"teacher"})
+    @GetMapping("/exams")
+    public ResponseEntity<?> getExamsByTeacherId() {
+        TeacherContext teacher = UserContext.getUserAs(TeacherContext.class);
+        Long teacher_id= teacher.getId();
+        List <Exam> exams=  this.examService.getListExamByTeacherId(teacher_id);
+        return ResponseEntity.ok(exams);
+    }
+
+    @Authorize(roles = {"teacher"})
     @PostMapping("/authorize")
     public ResponseEntity<?> authorize () {
         try {
-            TeacherContext teacher = UserContext.getUserAs(TeacherContext.class);
-            return ResponseEntity.ok(teacher);
+            TeacherContext teacherContext = UserContext.getUserAs(TeacherContext.class);
+            if (teacherContext == null) {
+                return ResponseEntity
+                        .status(HttpStatus.UNAUTHORIZED)
+                        .body(new GeneralErrorResponse("Invalid token"));
+            }
+            return ResponseEntity.ok(null);
         } catch (Exception e) {
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -88,14 +109,26 @@ public class TeacherController {
     @GetMapping("/info")
     public ResponseEntity<?> getInfo () {
         try {
-            TeacherContext teacher = UserContext.getUserAs(TeacherContext.class);
-            if (teacher == null) {
+            // Check context
+            TeacherContext teacherContext = UserContext.getUserAs(TeacherContext.class);
+            if (teacherContext == null) {
                 return ResponseEntity
-                        .status(HttpStatus.NOT_FOUND)
-                        .body(new GeneralErrorResponse("User not found"));
+                        .status(HttpStatus.UNAUTHORIZED)
+                        .body(new GeneralErrorResponse("Invalid token"));
             }
-            return ResponseEntity.ok(teacher);
-        } catch (Exception e) {
+
+            // Find and map entity
+            Teacher teacher = teacherService.findById(teacherContext.getId());
+            TeacherCreateResponse teacherResponse = TeacherMapper.INSTANCE.toTeacherCreateResponse(teacher);
+
+            return ResponseEntity.ok(teacherResponse);
+
+        } catch (ResponseStatusException e) {
+            return ResponseEntity
+                    .status(e.getStatusCode())
+                    .body(new GeneralErrorResponse(e.getReason()));
+        }
+        catch (Exception e) {
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new GeneralErrorResponse(e.getMessage()));
