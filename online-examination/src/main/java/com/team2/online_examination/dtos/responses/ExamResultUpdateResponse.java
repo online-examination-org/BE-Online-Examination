@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
+import java.util.Map;
 
 @Getter
 @Setter
@@ -21,5 +22,5 @@ public class ExamResultUpdateResponse {
     private Long questionId;
     private String questionText;
     private String questionType;
-    private String choices;
+    private Map<String,String> choices;
 }
