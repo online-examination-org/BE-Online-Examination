@@ -5,6 +5,8 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 @Entity
 @Getter
@@ -34,7 +36,9 @@ public class Exam extends BaseModel {
     private String description;
 
     @ManyToOne(fetch = FetchType.EAGER)
+    @Fetch(FetchMode.JOIN)
     @JoinColumn(name = "teacher_id", nullable = false)
+
     private Teacher teacher;
 
     @Column(name = "is_active", nullable = false,columnDefinition = "boolean default false")
