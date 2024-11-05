@@ -22,16 +22,20 @@ public class ExamResult extends BaseModel {
     @JoinColumn(name = "exam_id", nullable = false)
     private Exam exam;
 
+    @Column(nullable = false)
     private String name;
+
+    @Column(name = "student_id",nullable = false,unique = true)
+    private String studentId;
 
     @Column(nullable = false)
     private String email;
 
     private Float score;
 
-    @Column(name = "started_at", nullable = false)
+    @Column(name = "started_at")
     private LocalDateTime startedAt;
 
-    @Column(name = "finished_at", nullable = false)
+    @Column(name = "finished_at")
     private LocalDateTime finishedAt;
 }

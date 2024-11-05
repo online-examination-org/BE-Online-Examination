@@ -14,6 +14,8 @@ import lombok.Setter;
 public class ExamResultCreateRequest {
     @NotNull(message = "Exam id is required")
     private Long examId;
+    @NotNull(message = "Student is required")
+    private String studentId;
     @NotBlank(message = "Name is required")
     private String name;
     @NotBlank(message = "Email is required")

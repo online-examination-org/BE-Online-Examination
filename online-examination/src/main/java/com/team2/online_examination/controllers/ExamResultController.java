@@ -31,6 +31,9 @@ public class ExamResultController {
     public ResponseEntity<?> updateExamResult(@RequestBody ExamResultUpdateRequest examResultUpdateRequest, @RequestParam("id") Long id) {
         // Update exam result
         try{
+            if(id == null){
+                return ResponseEntity.badRequest().body("Id is required");
+            }
             return ResponseEntity.ok(examResultService.accessExam(examResultUpdateRequest, id));
         }
         catch (Exception e){

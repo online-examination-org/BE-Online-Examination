@@ -42,13 +42,14 @@ public class ExamResultService {
         Exam exam = examRepository.findById(examResultCreateRequest.getExamId()).orElseThrow(
                 ()-> new NotFoundException("Exam not found with id: " + examResultCreateRequest.getExamId())
         );
+        if(!exam.getIsActive()){
+            throw new NotFoundException("Exam not found with id: " + examResultCreateRequest.getExamId());
+        }
+        if(exam.getEndTime().isBefore(LocalDateTime.now())){
+            throw new NotFoundException("Exam has already finished");
+        }
         examResult.setExam(exam);
-        examResult.setScore(0f);
-        //Có mssv ko?
-        examResult.setStartedAt(LocalDateTime.now()); // Cần hỏi lại sửa lại nullable = true hay để như vầy
-        examResult.setFinishedAt(LocalDateTime.now()); // Cần hỏi lại sửa lại nullable = true hay để như vầy
         examResultRepository.save(examResult);
-
         ExamResultCreateResponse examCreateResponse = ExamResultMapper.INSTANCE.toExamResultCreateResponse(examResult);
         examCreateResponse.setExamGetResponse(ExamMapper.INSTANCE.toExamGetResponse(exam));
         return examCreateResponse;
@@ -60,20 +61,22 @@ public class ExamResultService {
         if(!Objects.equals(examResult.getExam().getExamId(), examResultUpdateRequest.getExamId())){
             throw new NotFoundException("Exam result not found with id: " + id);
         }
-        if(examResult.getStartedAt().isAfter(LocalDateTime.now())){
-            throw new BadRequestException("Exam has not started yet");
+        if (examResult.getStartedAt() != null) {
+            System.out.println(examResult.getStartedAt());
+            if (examResult.getStartedAt().isAfter(LocalDateTime.now())) {
+                throw new BadRequestException("Exam has not started yet");
+            }
+        }
+        if(examResult.getExam().getEndTime()!=null&&examResult.getExam().getEndTime().isBefore(LocalDateTime.now())){
+            throw new BadRequestException("Exam has already finished");
         }
         if(!examResult.getExam().getIsActive()){
             throw new BadRequestException("Exam has not started yet");
         }
-        if(examResult.getFinishedAt().isBefore(LocalDateTime.now())){
-            throw new BadRequestException("Exam has finished");
+        if(examResult.getFinishedAt()!=null){
+            throw new BadRequestException("Exam has already finished");
         }
-        LocalDateTime createdAt = examResult.getCreatedAt().toInstant()
-                .atZone(ZoneId.systemDefault())
-                .toLocalDateTime();
-
-        if (examResult.getUpdatedAt().equals(createdAt)) {
+        if(examResult.getCreatedAt()==null){
             examResult.setStartedAt(examResultUpdateRequest.getStartedAt());
             examResultRepository.save(examResult);
         }
