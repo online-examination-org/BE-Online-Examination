@@ -15,21 +15,27 @@ import com.team2.online_examination.exceptions.EmailExistedException;
 import com.team2.online_examination.mappers.TeacherMapper;
 import com.team2.online_examination.models.Teacher;
 import com.team2.online_examination.services.TeacherService;
+import com.team2.online_examination.services.ExamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import com.team2.online_examination.models.Exam;
 
+import java.util.List;
 @RestController
+
 @RequestMapping("/api/v1/teachers")
 public class TeacherController {
 
     private final TeacherService teacherService;
+    private final ExamService examService;
 
     @Autowired
-    public TeacherController(TeacherService teacherService) {
+    public TeacherController(TeacherService teacherService,ExamService examService) {
         this.teacherService = teacherService;
+        this.examService = examService;
     }
 
     @PostMapping("/signup")
@@ -70,6 +76,15 @@ public class TeacherController {
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new GeneralErrorResponse(e.getMessage()));
         }
+    }
+
+    @Authorize(roles = {"teacher"})
+    @GetMapping("/exams")
+    public ResponseEntity<?> getExamsByTeacherId() {
+        TeacherContext teacher = UserContext.getUserAs(TeacherContext.class);
+        Long teacher_id= teacher.getId();
+        List <Exam> exams=  this.examService.getListExamByTeacherId(teacher_id);
+        return ResponseEntity.ok(exams);
     }
 
     @Authorize(roles = {"teacher"})
