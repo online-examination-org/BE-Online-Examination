@@ -32,7 +32,7 @@ public class JwtPayload {
                 Object value = field.get(input);  // Get the value of the field
                 claims.put(field.getName(), value);  // Add field name and value to claims
             } catch (IllegalAccessException e) {
-                e.printStackTrace();
+                System.out.println(e.getMessage());
             }
         }
     }
@@ -59,7 +59,7 @@ public class JwtPayload {
             }
             return instance;
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
             return null;
         }
     }
@@ -82,6 +82,6 @@ public class JwtPayload {
                 return ((Double) value).floatValue();
             }
         }
-        return value; // Return the original value if no conversion is necessary
+        return value;
     }
 }
