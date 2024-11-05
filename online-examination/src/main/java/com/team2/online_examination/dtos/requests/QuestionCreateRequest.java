@@ -1,19 +1,20 @@
 package com.team2.online_examination.dtos.requests;
 
+import com.team2.online_examination.models.Question;
 import jakarta.validation.constraints.NotBlank;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-@Data
+import java.util.List;
+import java.util.Map;
+
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class QuestionCreateRequest {
 
     @NotBlank(message = "Exam id is required")
-    long exam_id;
+    Long exam_id;
 
     @NotBlank(message = "Question Text is required")
     String questionText;
@@ -25,6 +26,6 @@ public class QuestionCreateRequest {
     String answer;
 
     @NotBlank(message = "Choices is required")
-    String choices;
+    Map<String,String> choices;
 
 }

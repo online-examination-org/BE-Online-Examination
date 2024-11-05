@@ -13,4 +13,6 @@ import java.util.Optional;
 public interface QuestionRepository extends JpaRepository<Question, Long> {
     List<Question> findAllByExam_ExamId(Long exam_id);
     Optional<Question> findByQuestionId(Long questionId);
+
+
 }
