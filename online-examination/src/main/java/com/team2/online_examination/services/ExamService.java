@@ -13,6 +13,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
+import java.util.List;
+import java.util.Optional;
+
 @Service
 public class ExamService {
     private final ExamRepository examRepository;
@@ -25,6 +28,7 @@ public class ExamService {
     public String randomCode(){
         return UuidCreator.getTimeBased().toString().substring(0,6);
     }
+
     public void createExam(ExamCreateRequest examCreateRequest, Long teacherId) throws NotFoundException {
         Exam exam = ExamMapper.INSTANCE.toExam(examCreateRequest);
         Teacher teacher = teacherRepository.findById(teacherId).orElseThrow(
@@ -34,6 +38,7 @@ public class ExamService {
         exam.setTeacher(teacher);
         examRepository.save(exam);
     }
+
     public void updateExam(ExamUpdateRequest examUpdateRequest, Long teacherId,Long id) throws NotFoundException {
         Exam updateExam = ExamMapper.INSTANCE.toExam(examUpdateRequest);
         Exam exam = examRepository.findById(id).orElseThrow(
@@ -53,4 +58,13 @@ public class ExamService {
         exam.setDescription(updateExam.getDescription()!=null?updateExam.getDescription():exam.getDescription());
         examRepository.save(exam);
     }
+
+    public List<Exam> getListExamByTeacherId(Long teacherId) {
+        return examRepository.findByTeacher_Id(teacherId);
+    }
+
+    public Optional<Exam> getExamByPasscode(String passcode) {
+        return examRepository.findByPasscode(passcode);
+    }
+
 }
