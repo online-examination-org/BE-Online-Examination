@@ -10,6 +10,7 @@ import com.team2.online_examination.models.Teacher;
 import com.team2.online_examination.repositories.TeacherRepository;
 import com.team2.online_examination.utils.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -18,6 +19,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 
@@ -54,10 +56,16 @@ public class TeacherService {
     }
 
     public Teacher findByEmail(String email) {
-        return teacherRepository.findByEmail(email).orElse(null);
+
+        return teacherRepository
+                .findByEmail(email)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
     }
     public Teacher findById(Long id) {
-        return teacherRepository.findById(id).orElse(null);
+
+        return teacherRepository
+                .findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
     }
     public JwtToken authentication(String email, String password) {
         try {
