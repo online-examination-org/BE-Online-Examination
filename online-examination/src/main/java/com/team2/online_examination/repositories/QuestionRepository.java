@@ -9,10 +9,11 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+
 @Repository
 public interface QuestionRepository extends JpaRepository<Question, Long> {
     List<Question> findAllByExam_ExamId(Long exam_id);
-    Optional<Question> findByQuestionId(Long questionId);
 
+    Optional<Question> findByQuestionId(Long questionId);
 
 }

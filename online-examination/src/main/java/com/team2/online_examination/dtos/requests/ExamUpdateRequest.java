@@ -17,9 +17,9 @@ public class ExamUpdateRequest {
     //@NotBlank(message = "Title is required")
     private String title;
     //@NotNull(message = "Start time is required")
-    private LocalDateTime start_time;
+    private LocalDateTime startTime;
     //@NotNull(message = "End time is required")
-    private LocalDateTime end_time;
+    private LocalDateTime endTime;
     //@NotNull(message = "Passcode is required")
     private Integer duration;
     //@NotBlank(message = "Description is required")
