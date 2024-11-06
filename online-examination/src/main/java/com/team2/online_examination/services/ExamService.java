@@ -49,7 +49,7 @@ public class ExamService {
         Exam updateExam = ExamMapper.INSTANCE.toExam(examUpdateRequest);
         Exam exam = examRepository.findById(id).orElseThrow(
                 () -> new NotFoundException("Exam not found with id: " + id));
-        if (exam.getStartTime().isAfter(LocalDateTime.now())) {
+        if (exam.getStartTime().isBefore(LocalDateTime.now())) {
             throw new NotFoundException("Exam is already started");
         }
         if (!exam.getTeacher().getId().equals(teacherId)) {
