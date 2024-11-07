@@ -50,7 +50,7 @@ jobs:
             -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
             -H "Content-Type: application/json" \
             -d '{
-              "serviceId": "<YOUR_SERVICE_ID>",
+              "serviceId": "${{ secrets.RENDER_SERVICE_ID }}",
               "image": "docker.io/hungvo2003vn/online-examination:latest"
             }' \
             https://api.render.com/v1/services/deploys
