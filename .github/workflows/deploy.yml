@@ -28,9 +28,11 @@ jobs:
 
       - name: Build project with Maven
         run: mvn clean package
+        working-directory: ./online-examination  # Adjust path as necessary
 
       - name: Build Docker image
         run: docker build -t hungvo2003vn/online-examination:latest .
+        working-directory: ./online-examination  # Adjust path as necessary
 
       - name: Push Docker image to Docker Hub
         run: |
@@ -44,10 +46,6 @@ jobs:
     steps:
       - name: Deploy to Render
         run: |
-          # Example using Render CLI (requires CLI installation)
-          # render deploy service --service-id <YOUR_SERVICE_ID> --image hungvo2003vn/online-examination:latest
-          
-          # OR use the Render API:
           curl -X POST \
             -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
             -H "Content-Type: application/json" \
