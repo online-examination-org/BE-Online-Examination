@@ -15,9 +15,6 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
     List<Question> findAllByExam_ExamId(Long exam_id);
 
     Optional<Question> findByQuestionId(Long questionId);
-<<<<<<< Updated upstream
 
-=======
     void deleteAllByExam_ExamId(Long examId);
->>>>>>> Stashed changes
 }
