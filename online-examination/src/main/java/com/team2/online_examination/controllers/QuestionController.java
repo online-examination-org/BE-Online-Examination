@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.Collections;
 import java.util.List;
@@ -70,6 +71,22 @@ public class QuestionController {
             return ResponseEntity.ok("Question updated successfully");
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<?> deleteQuestion(@RequestParam @NotNull(message = "Id is required") long id, @RequestParam @NotNull(message = "exam_id is required") long exam_id) {
+        try {
+            this.questionService.deleteQuestion(id,exam_id);
+            return ResponseEntity.ok("Question deleted successfully");
+        }
+        catch (NotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                                .body(e.getMessage());
+        }
+        catch (Exception e) {
+            return ResponseEntity.internalServerError()
+                                .body(e.getMessage());
         }
     }
 }

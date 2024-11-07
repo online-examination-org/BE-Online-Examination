@@ -55,13 +55,11 @@ public class QuestionService {
         return addedQuestion;
     }
 
-    public void updateQuestion(QuestionUpdateRequest questionUpdateRequest, long id, long exam_id) throws NotFoundException {
+    public void updateQuestion(QuestionUpdateRequest questionUpdateRequest, Long id, Long exam_id) throws NotFoundException {
         Question updateQuestion = QuestionMapper.INSTANCE.toQuestion(questionUpdateRequest);
-        System.out.print(updateQuestion);
         Question question = questionRepository.findByQuestionId(id).orElseThrow(
                 () -> new NotFoundException("Question not found with id: " + id)
         );
-        System.out.print(question);
         Exam exam = examRepository.findById(exam_id).orElseThrow(
                 () -> new NotFoundException("Exam not found with id: " + exam_id)
         );
@@ -74,5 +72,17 @@ public class QuestionService {
         question.setChoices(updateQuestion.getChoices());
 
         questionRepository.save(question);
+    }
+    public void deleteQuestion(long id, long exam_id) {
+        Question question = questionRepository.findByQuestionId(id).orElseThrow(
+                () -> new NotFoundException("Question not found with id: " + id)
+        );
+        Exam exam = examRepository.findById(exam_id).orElseThrow(
+                () -> new NotFoundException("Exam not found with id: " + exam_id)
+        );
+        if(!question.getExam().getExamId().equals(exam_id)){
+            throw new NotFoundException("Exam not found");
+        }
+        questionRepository.delete(question);
     }
 }
