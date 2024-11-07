@@ -77,6 +77,7 @@ public class StudentController {
             this.examResultService.submit(examResultId, finishAt);
 
             return ResponseEntity.ok(null);
+
         } catch (ResponseStatusException e) {
             return ResponseEntity
                     .status(e.getStatusCode())
