@@ -5,13 +5,16 @@ import com.team2.online_examination.dtos.requests.ExamCreateRequest;
 import com.team2.online_examination.dtos.requests.ExamUpdateRequest;
 import com.team2.online_examination.dtos.responses.ExamCreateResponse;
 import com.team2.online_examination.exceptions.NotFoundException;
+import com.team2.online_examination.exceptions.BadRequest;
 import com.team2.online_examination.mappers.ExamMapper;
 import com.team2.online_examination.models.Exam;
 import com.team2.online_examination.models.Teacher;
 import com.team2.online_examination.repositories.ExamRepository;
+import com.team2.online_examination.repositories.QuestionRepository;
 import com.team2.online_examination.repositories.TeacherRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -23,11 +26,13 @@ import java.util.Optional;
 public class ExamService {
     private final ExamRepository examRepository;
     private final TeacherRepository teacherRepository;
+    private final QuestionRepository questionRepository;
 
     @Autowired
-    public ExamService(ExamRepository examRepository, TeacherRepository teacherRepository) {
+    public ExamService(ExamRepository examRepository, TeacherRepository teacherRepository, QuestionRepository questionRepository ) {
         this.examRepository = examRepository;
         this.teacherRepository = teacherRepository;
+        this.questionRepository = questionRepository;
     }
 
     public String randomCode() {
@@ -70,6 +75,22 @@ public class ExamService {
 
     public Optional<Exam> getExamByPasscode(String passcode) {
         return examRepository.findByPasscode(passcode);
+    }
+
+    @Transactional
+    public void deleteDraftExam(Long examId,Long teacherId) {
+        //check if teacher create this exam
+        Exam exam = examRepository.findByExamIdAndTeacher_Id(examId,teacherId).orElseThrow(
+                () -> new NotFoundException("Exam not found with id: " + examId)
+        );
+        Boolean is_active = exam.getIsActive();
+        //only delete the draft exam
+        if (is_active) {
+            throw new BadRequest("Can't delete an active exam");
+        }
+        questionRepository.deleteAllByExam_ExamId(examId);
+        examRepository.deleteByExamId(examId);
+
     }
 
 }
