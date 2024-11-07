@@ -1,13 +1,20 @@
 package com.team2.online_examination.controllers;
 
+import com.team2.online_examination.annotations.Authorize;
+import com.team2.online_examination.contexts.TeacherContext;
+import com.team2.online_examination.contexts.UserContext;
 import com.team2.online_examination.dtos.requests.ExamResultCreateRequest;
 import com.team2.online_examination.dtos.requests.ExamResultUpdateRequest;
 import com.team2.online_examination.exceptions.BadRequestException;
 import com.team2.online_examination.exceptions.NotFoundException;
+import com.team2.online_examination.models.Exam;
+import com.team2.online_examination.models.ExamResult;
 import com.team2.online_examination.services.ExamResultService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/exam-results")
@@ -53,5 +60,12 @@ public class ExamResultController {
             }
             return ResponseEntity.internalServerError().body(e.getMessage());
         }
+    }
+
+    @Authorize(roles = {"teacher"})
+    @GetMapping("/{examId}")
+    public ResponseEntity<?> getExamResult(@PathVariable Long examId) {
+        List<ExamResult> examResultList=  this.examResultService.getAllExamResultByExamId(examId);
+        return ResponseEntity.ok(examResultList);
     }
 }

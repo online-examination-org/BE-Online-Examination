@@ -23,6 +23,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class ExamResultService {
@@ -83,5 +84,7 @@ public class ExamResultService {
         List<Question> questions = questionRepository.findAllByExam_ExamId(examResult.getExam().getExamId());
         return QuestionMapper.INSTANCE.toExamResultUpdateResponseList(questions);
     }
-
+    public List<ExamResult> getAllExamResultByExamId(Long examId) {
+        return examResultRepository.findAllByExam_ExamId(examId);
+    }
 }
