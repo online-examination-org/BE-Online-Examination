@@ -42,5 +42,6 @@ public class Exam extends BaseModel {
     private Teacher teacher;
 
     @Column(name = "is_active", nullable = false,columnDefinition = "boolean default false")
-    private Boolean isActive;
+    private Boolean isActive = false;
+
 }

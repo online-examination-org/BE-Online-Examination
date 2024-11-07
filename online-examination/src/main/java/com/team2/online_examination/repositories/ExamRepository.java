@@ -11,4 +11,7 @@ import java.util.Optional;
 public interface ExamRepository extends JpaRepository<Exam, Long> {
     List<Exam> findByTeacher_Id(Long teacherId);
     Optional<Exam> findByPasscode(String passcode);
+    Optional<Exam> findByExamIdAndTeacher_Id(Long examId, Long teacherId);
+    void deleteByExamId(Long examId); // Delete by examId
+
 }

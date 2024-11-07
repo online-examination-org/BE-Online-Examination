@@ -63,6 +63,7 @@ public class QuestionController {
                     .body(e.getMessage());
         }
     }
+
     @PutMapping("/update")
     public ResponseEntity<?> updateQuestion(@RequestBody @Valid QuestionUpdateRequest questionUpdateRequest, @RequestParam @NotNull(message = "Id is required") Long id, @RequestParam @NotNull(message = "exam_id is required") Long exam_id) {
         try {

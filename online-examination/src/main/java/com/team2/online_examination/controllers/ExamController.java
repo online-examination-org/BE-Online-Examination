@@ -3,7 +3,6 @@ package com.team2.online_examination.controllers;
 import com.team2.online_examination.annotations.Authorize;
 import com.team2.online_examination.contexts.TeacherContext;
 import com.team2.online_examination.contexts.UserContext;
-import com.team2.online_examination.dtos.JwtPayload;
 import com.team2.online_examination.dtos.requests.ExamCreateRequest;
 import com.team2.online_examination.dtos.requests.ExamUpdateRequest;
 import com.team2.online_examination.exceptions.BadRequestException;
@@ -11,11 +10,13 @@ import com.team2.online_examination.exceptions.NotFoundException;
 import com.team2.online_examination.services.ExamService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+
+
+@SecurityRequirement(name = "Bearer Authentication")
 @RestController
 @RequestMapping("/api/v1/exams")
 public class ExamController {
@@ -70,4 +71,18 @@ public class ExamController {
             return ResponseEntity.internalServerError().body(e.getMessage());
         }
     }
+
+    @Authorize(roles = {"teacher"})
+    @DeleteMapping("/{examId}")
+    public ResponseEntity<?> deleteDraftExam(@PathVariable Long examId) {
+        try {
+            TeacherContext teacher = UserContext.getUserAs(TeacherContext.class);
+            Long teacherId = teacher.getId();
+            this.examService.deleteDraftExam(examId, teacherId);
+            return ResponseEntity.ok("Exam deleted successfully");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
 }
