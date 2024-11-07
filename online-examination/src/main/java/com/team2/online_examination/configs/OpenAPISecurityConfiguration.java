@@ -22,7 +22,7 @@ import org.springframework.context.annotation.Configuration;
         ),
         servers = {
                 @Server(
-                        url = "https://online-examination-latest.onrender.com",
+                        url = "https://online-examination-0fcu.onrender.com",
                         description = "Online examination host server"
                 ),
                 @Server(
