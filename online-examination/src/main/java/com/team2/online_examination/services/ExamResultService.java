@@ -12,6 +12,7 @@ import com.team2.online_examination.mappers.ExamResultMapper;
 import com.team2.online_examination.mappers.QuestionMapper;
 import com.team2.online_examination.models.Exam;
 import com.team2.online_examination.models.ExamResult;
+import com.team2.online_examination.models.ExamResultDetail;
 import com.team2.online_examination.models.Question;
 import com.team2.online_examination.repositories.ExamRepository;
 import com.team2.online_examination.repositories.ExamResultRepository;
@@ -30,12 +31,20 @@ public class ExamResultService {
     private final ExamResultRepository examResultRepository;
     private final ExamRepository examRepository;
     private final QuestionRepository questionRepository;
+    private final ExamResultDetailService examResultDetailService;
 
     @Autowired
-    public ExamResultService(ExamResultRepository examResultRepository, ExamRepository examRepository, QuestionRepository questionRepository) {
+    public ExamResultService(
+            ExamResultRepository examResultRepository,
+            ExamRepository examRepository,
+            QuestionRepository questionRepository,
+            ExamResultDetailService examResultDetailService
+    ) {
         this.examResultRepository = examResultRepository;
         this.examRepository = examRepository;
         this.questionRepository = questionRepository;
+        this.examResultDetailService = examResultDetailService;
+
     }
 
     public ExamResultCreateResponse addExamResult(ExamResultCreateRequest examResultCreateRequest) throws NotFoundException {
@@ -86,5 +95,42 @@ public class ExamResultService {
     }
     public List<ExamResult> getAllExamResultByExamId(Long examId) {
         return examResultRepository.findAllByExam_ExamId(examId);
+    }
+
+    public void submit(Long examResultId, LocalDateTime finishAt) throws NotFoundException, BadRequestException {
+        ExamResult examResult = examResultRepository.findById(examResultId)
+                .orElseThrow(() -> new NotFoundException("Exam result not found with id: " + examResultId));
+
+        if (examResult.getFinishedAt() != null) {
+            throw new BadRequestException("Exam has already been submitted");
+        }
+
+        // Validate that each question in the exam has been submitted
+        Long examId = examResult.getExam().getExamId();
+        List<Question> questions = questionRepository.findAllByExam_ExamId(examId);
+        if (questions.isEmpty()) {
+            throw new BadRequestException("No questions found for this exam result");
+        }
+
+        // Fetch all examResultDetail
+        List<ExamResultDetail> examResultDetails = examResultDetailService.getExamResultDetailsByExamResultId(examResultId);
+
+        // Calculate score based on correct answers
+        float totalScore = 0;
+        for (ExamResultDetail examResultDetail : examResultDetails) {
+            Long examResultDetailId = examResultDetail.getExamResultDetailId();
+            boolean isCorrect = examResultDetailService.submit(examResultDetailId);
+            if (isCorrect) {
+                totalScore += 1;
+            }
+        }
+
+        // Update score and finishedAt
+        float percentageScore = (totalScore / questions.size()) * 100;
+        examResult.setScore(percentageScore);
+        examResult.setFinishedAt(finishAt != null && finishAt.isBefore(LocalDateTime.now()) ? finishAt : LocalDateTime.now());
+
+        // Save submission
+        examResultRepository.save(examResult);
     }
 }
