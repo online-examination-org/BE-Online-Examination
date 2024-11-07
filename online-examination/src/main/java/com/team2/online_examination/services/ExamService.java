@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@Transactional
 public class ExamService {
     private final ExamRepository examRepository;
     private final TeacherRepository teacherRepository;

@@ -19,6 +19,7 @@ import com.team2.online_examination.repositories.ExamResultRepository;
 import com.team2.online_examination.repositories.QuestionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -27,6 +28,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Service
+@Transactional
 public class ExamResultService {
     private final ExamResultRepository examResultRepository;
     private final ExamRepository examRepository;
