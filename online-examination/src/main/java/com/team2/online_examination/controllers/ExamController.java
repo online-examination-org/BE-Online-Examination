@@ -70,6 +70,7 @@ public class ExamController {
         }
     }
 
+    @SecurityRequirement(name = "Bearer Authentication")
     @Authorize(roles = {"teacher"})
     @DeleteMapping("/{examId}")
     public ResponseEntity<?> deleteDraftExam(@PathVariable Long examId) {

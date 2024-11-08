@@ -2,6 +2,7 @@ package com.team2.online_examination.controllers;
 
 import java.util.ArrayList;
 
+import com.team2.online_examination.annotations.Authorize;
 import com.team2.online_examination.dtos.requests.ExamUpdateRequest;
 import com.team2.online_examination.dtos.requests.QuestionCreateRequest;
 import com.team2.online_examination.dtos.requests.QuestionUpdateRequest;
@@ -16,6 +17,7 @@ import com.team2.online_examination.models.Question;
 import com.team2.online_examination.models.Teacher;
 import com.team2.online_examination.services.QuestionService;
 import com.team2.online_examination.services.TeacherService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +39,8 @@ public class QuestionController {
         this.questionService = questionService;
     }
 
+    @SecurityRequirement(name = "Bearer Authentication")
+    @Authorize(roles ={"student", "teacher"})
     @GetMapping("/view")
     public ResponseEntity<?> findQuestion(@RequestParam(defaultValue = "0") long exam_id) {
         try {
@@ -49,6 +53,8 @@ public class QuestionController {
         }
     }
 
+    @SecurityRequirement(name = "Bearer Authentication")
+    @Authorize(roles ={"teacher"})
     @PostMapping("/add")
     public ResponseEntity<?> addQuestion(@RequestBody List<QuestionCreateRequest> questionCreateRequests) {
         try {
@@ -65,6 +71,8 @@ public class QuestionController {
         }
     }
 
+    @SecurityRequirement(name = "Bearer Authentication")
+    @Authorize(roles ={"teacher"})
     @PutMapping("/update")
     public ResponseEntity<?> updateQuestion(@RequestBody @Valid QuestionUpdateRequest questionUpdateRequest, @RequestParam @NotNull(message = "Id is required") Long id, @RequestParam @NotNull(message = "exam_id is required") Long exam_id) {
         try {
@@ -75,6 +83,8 @@ public class QuestionController {
         }
     }
 
+    @SecurityRequirement(name = "Bearer Authentication")
+    @Authorize(roles ={"teacher"})
     @DeleteMapping("/delete")
     public ResponseEntity<?> deleteQuestion(@RequestParam @NotNull(message = "Id is required") long id, @RequestParam @NotNull(message = "exam_id is required") long exam_id) {
         try {

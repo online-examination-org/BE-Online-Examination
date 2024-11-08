@@ -67,6 +67,7 @@ public class ExamResultController {
         }
     }
 
+    @SecurityRequirement(name = "Bearer Authentication")
     @Authorize(roles = {"teacher"})
     @GetMapping("/{examId}")
     public ResponseEntity<?> getExamResult(@PathVariable Long examId) {

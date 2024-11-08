@@ -92,6 +92,7 @@ public class TeacherController {
         }
     }
 
+    @SecurityRequirement(name = "Bearer Authentication")
     @Authorize(roles = {"teacher"})
     @GetMapping("/exams")
     public ResponseEntity<?> getExamsByTeacherId() {
@@ -101,6 +102,7 @@ public class TeacherController {
         return ResponseEntity.ok(exams);
     }
 
+    @SecurityRequirement(name = "Bearer Authentication")
     @Authorize(roles = {"teacher"})
     @GetMapping("/result/detail")
     public ResponseEntity<?> getExamResultDetail(@RequestParam @NotNull int examResultId,
@@ -145,6 +147,7 @@ public class TeacherController {
         }
     }
 
+    @SecurityRequirement(name = "Bearer Authentication")
     @Authorize(roles = {"teacher"})
     @GetMapping("/info")
     public ResponseEntity<?> getInfo () {

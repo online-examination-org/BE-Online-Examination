@@ -12,6 +12,7 @@ import com.team2.online_examination.models.ExamResult;
 import com.team2.online_examination.services.ExamResultDetailService;
 import com.team2.online_examination.services.ExamResultService;
 import com.team2.online_examination.services.ExamService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -49,6 +50,7 @@ public class StudentController {
         return this.examService.getExamByPasscode(passcode);
     }
 
+    @SecurityRequirement(name = "Bearer Authentication")
     @Authorize(roles = {"student"})
     @PostMapping("/exam/save")
     public ResponseEntity<?> saveProgress(@RequestBody ExamSaveRequest examSaveRequest) {
@@ -75,6 +77,7 @@ public class StudentController {
         }
     }
 
+    @SecurityRequirement(name = "Bearer Authentication")
     @Authorize(roles = {"student"})
     @PostMapping("/exam/submit")
     public ResponseEntity<?> submit(@RequestBody ExamSubmitRequest examSubmitRequest) {
