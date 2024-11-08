@@ -11,7 +11,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ExamResultCreateResponse {
-    private Long examResultId;
+    private String examResultToken;
     private ExamGetResponse examGetResponse;
     private String name;
     private String email;

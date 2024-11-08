@@ -26,6 +26,7 @@ import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import com.team2.online_examination.models.Exam;
@@ -68,6 +69,7 @@ public class TeacherController {
         }
     }
 
+    @Transactional
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody TeacherLoginRequest teacherLoginRequest) {
         try {
