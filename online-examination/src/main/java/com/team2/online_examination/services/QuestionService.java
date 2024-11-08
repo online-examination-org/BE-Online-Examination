@@ -15,9 +15,7 @@ import com.team2.online_examination.repositories.QuestionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class QuestionService {
@@ -32,8 +30,12 @@ public class QuestionService {
     }
 
     public List<Question> findAllByExamId(long examId) {
-        if (examId == 0) return questionRepository.findAll();
-        return questionRepository.findAllByExam_ExamId(examId);
+        List<Question> questions;
+        if (examId == 0) questions = questionRepository.findAll();
+        else questions = questionRepository.findAllByExam_ExamId(examId);
+        List<Question> sortedQuestions = new ArrayList<>(questions);
+        Collections.sort(sortedQuestions, Comparator.comparingLong(Question::getQuestionId));
+        return sortedQuestions;
     }
 
     public Optional<Question> findByQuestionId(long questionId) {
