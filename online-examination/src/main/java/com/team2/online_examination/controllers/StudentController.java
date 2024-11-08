@@ -1,9 +1,12 @@
 package com.team2.online_examination.controllers;
 
 import com.team2.online_examination.annotations.Authorize;
+import com.team2.online_examination.contexts.StudentContext;
+import com.team2.online_examination.contexts.UserContext;
 import com.team2.online_examination.dtos.requests.ExamSaveRequest;
 import com.team2.online_examination.dtos.requests.ExamSubmitRequest;
 import com.team2.online_examination.exceptions.AuthenticationFailureException;
+import com.team2.online_examination.exceptions.BadRequestException;
 import com.team2.online_examination.exceptions.GeneralErrorResponse;
 import com.team2.online_examination.models.ExamResult;
 import com.team2.online_examination.services.ExamResultDetailService;
@@ -46,11 +49,15 @@ public class StudentController {
         return this.examService.getExamByPasscode(passcode);
     }
 
-//    @Authorize(roles = {"student"})
+    @Authorize(roles = {"student"})
     @PostMapping("/exam/save")
     public ResponseEntity<?> saveProgress(@RequestBody ExamSaveRequest examSaveRequest) {
         try {
-            Long examResultId = examSaveRequest.getExam_result_id();
+            StudentContext studentContext = UserContext.getUserAs(StudentContext.class);
+            if(studentContext == null){
+                throw new BadRequestException("Student context is required");
+            }
+            Long examResultId = studentContext.getExamResultId();
             Long questionId = examSaveRequest.getQuestion_id();
             String response = examSaveRequest.getResponse();
             this.examResultDetailService.updateResponse(examResultId, questionId, response);
@@ -68,11 +75,15 @@ public class StudentController {
         }
     }
 
-//    @Authorize(roles = {"student"})
+    @Authorize(roles = {"student"})
     @PostMapping("/exam/submit")
     public ResponseEntity<?> submit(@RequestBody ExamSubmitRequest examSubmitRequest) {
         try {
-            Long examResultId = examSubmitRequest.getExam_result_id();
+            StudentContext studentContext = UserContext.getUserAs(StudentContext.class);
+            if(studentContext == null){
+                throw new BadRequestException("Student context is required");
+            }
+            Long examResultId = studentContext.getExamResultId();
             LocalDateTime finishAt = examSubmitRequest.getFinish_at();
             this.examResultService.submit(examResultId, finishAt);
 
