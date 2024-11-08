@@ -22,6 +22,7 @@ import com.team2.online_examination.models.Teacher;
 import com.team2.online_examination.services.ExamResultDetailService;
 import com.team2.online_examination.services.TeacherService;
 import com.team2.online_examination.services.ExamService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -125,6 +126,7 @@ public class TeacherController {
         }
     }
 
+    @SecurityRequirement(name = "Bearer Authentication")
     @Authorize(roles = {"teacher"})
     @PostMapping("/authorize")
     public ResponseEntity<?> authorize () {
