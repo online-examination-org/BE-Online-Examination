@@ -51,7 +51,6 @@ public class ExamResultController {
         // Update exam result
         try{
             StudentContext studentContext = UserContext.getUserAs(StudentContext.class);
-            System.out.println("Hello");
             if(studentContext == null){
                 return ResponseEntity.badRequest().body("Student context is required");
             }
