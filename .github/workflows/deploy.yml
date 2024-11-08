@@ -45,12 +45,45 @@ jobs:
 
     steps:
       - name: Deploy to Render
+        id: deploy_step
         run: |
-          curl -X POST \
+          DEPLOY_RESPONSE=$(curl -X POST \
             -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
             -H "Content-Type: application/json" \
             -d '{
               "clearCache": "clear",
               "imageUrl": "docker.io/hungvo2003vn/online-examination:latest"
             }' \
-            https://api.render.com/v1/services/${{ secrets.RENDER_SERVICE_ID }}/deploys
+            https://api.render.com/v1/services/${{ secrets.RENDER_SERVICE_ID }}/deploys)
+
+          # Extract deployment ID from the response
+          DEPLOY_ID=$(echo "$DEPLOY_RESPONSE" | jq -r '.id')
+          echo "Deployment ID: $DEPLOY_ID"
+          echo "::set-output name=deploy_id::$DEPLOY_ID"
+
+      - name: Check Deployment Status
+        run: |
+          STATUS="update_in_progress"
+          FINISHED_AT=null
+
+          while [[ "$STATUS" == "update_in_progress" || "$STATUS" == "build_in_progress" || "$STATUS" == "pre_deploy_in_progress" ]] && [ "$FINISHED_AT" == "null" ]; do
+            sleep 10
+            STATUS_RESPONSE=$(curl -s -X GET \
+              -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
+              https://api.render.com/v1/services/${{ secrets.RENDER_SERVICE_ID }}/deploys/${{ steps.deploy_step.outputs.deploy_id }})
+
+            STATUS=$(echo "$STATUS_RESPONSE" | jq -r '.status')
+            FINISHED_AT=$(echo "$STATUS_RESPONSE" | jq -r '.finishedAt')
+            echo "Current Status: $STATUS"
+          done
+
+          if [ "$STATUS" == "live" ]; then
+            echo "Deployment completed successfully and is now live."
+          elif [[ "$STATUS" == "build_failed" || "$STATUS" == "update_failed" || "$STATUS" == "pre_deploy_failed" ]]; then
+            echo "Deployment failed with status: $STATUS"
+            exit 1
+          else
+            echo "Deployment finished with unexpected status: $STATUS"
+            exit 1
+          fi
+  
