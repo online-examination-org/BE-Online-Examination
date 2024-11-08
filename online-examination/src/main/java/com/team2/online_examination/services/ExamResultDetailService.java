@@ -1,5 +1,8 @@
 package com.team2.online_examination.services;
 
+import com.team2.online_examination.dtos.responses.ExamResultDetailResponse;
+import com.team2.online_examination.dtos.responses.QuestionResponse;
+import com.team2.online_examination.mappers.QuestionMapper;
 import com.team2.online_examination.models.ExamResult;
 import com.team2.online_examination.models.ExamResultDetail;
 import com.team2.online_examination.models.Question;
@@ -11,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -90,4 +94,26 @@ public class ExamResultDetailService {
     public List<ExamResultDetail> getExamResultDetailsByExamResultId(Long examResultId) {
         return examResultDetailRepository.findByExamResult_ExamResultId(examResultId);
     }
+
+    public List<ExamResultDetailResponse> getExamResultDetailsByExamResultIdAndStudentId(Long examResultId, String studentId) {
+        List<ExamResultDetail> examResultDetails = this.getExamResultDetailsByExamResultId(examResultId);
+        List<ExamResultDetailResponse> examResultDetailResponses = new ArrayList<>();;
+        for (ExamResultDetail examResultDetail:examResultDetails) {
+            if (examResultDetail.getExamResult().getStudentId().equals(studentId)) {
+                ExamResultDetailResponse examResultDetailResponse = new ExamResultDetailResponse();
+                QuestionResponse questionResponse = QuestionMapper.INSTANCE
+                        .toQuestionResponse(examResultDetail.getQuestion());
+
+                examResultDetailResponse.setQuestionText(questionResponse.getQuestionText());
+                examResultDetailResponse.setQuestionType(questionResponse.getQuestionType());
+                examResultDetailResponse.setAnswer(questionResponse.getAnswer());
+                examResultDetailResponse.setChoices(questionResponse.getChoices());
+                examResultDetailResponse.setResponse(examResultDetail.getResponse());
+                examResultDetailResponse.setCorrect(examResultDetail.getIsCorrect());
+                examResultDetailResponses.add(examResultDetailResponse);
+            }
+        }
+        return examResultDetailResponses;
+    }
+
 }

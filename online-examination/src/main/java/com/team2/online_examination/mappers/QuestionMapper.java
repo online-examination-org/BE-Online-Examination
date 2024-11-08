@@ -4,6 +4,7 @@ import com.team2.online_examination.dtos.TeacherJwtPayload;
 import com.team2.online_examination.dtos.requests.QuestionCreateRequest;
 import com.team2.online_examination.dtos.requests.QuestionUpdateRequest;
 import com.team2.online_examination.dtos.requests.TeacherCreateRequest;
+import com.team2.online_examination.dtos.responses.QuestionResponse;
 import com.team2.online_examination.dtos.responses.TeacherCreateResponse;
 import com.team2.online_examination.models.Question;
 import com.team2.online_examination.models.Teacher;
@@ -20,6 +21,10 @@ public interface QuestionMapper {
     ExamResultUpdateResponse toExamResultUpdateResponse(Question question);
 
     List<ExamResultUpdateResponse> toExamResultUpdateResponseList(List<Question> questions);
+
+    QuestionCreateRequest toQuestionCreateRequest (Question question);
+
+    QuestionResponse toQuestionResponse(Question question);
 
     Question toQuestion(QuestionCreateRequest request);
 
