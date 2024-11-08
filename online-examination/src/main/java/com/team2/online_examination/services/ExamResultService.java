@@ -51,11 +51,11 @@ public class ExamResultService {
 
     public ExamResultCreateResponse addExamResult(ExamResultCreateRequest examResultCreateRequest) throws NotFoundException {
         ExamResult examResult = ExamResultMapper.INSTANCE.toExamResult(examResultCreateRequest);
-        Exam exam = examRepository.findById(examResultCreateRequest.getExamId()).orElseThrow(
-                ()-> new NotFoundException("Exam not found with id: " + examResultCreateRequest.getExamId())
+        Exam exam = examRepository.findByPasscode(examResultCreateRequest.getPasscode()).orElseThrow(
+                ()-> new NotFoundException("Exam not found with id: " + examResultCreateRequest.getPasscode())
         );
         if(!exam.getIsActive()){
-            throw new NotFoundException("Exam not found with id: " + examResultCreateRequest.getExamId());
+            throw new NotFoundException("Exam not found with passcode: " + examResultCreateRequest.getPasscode());
         }
         if(exam.getEndTime().isBefore(LocalDateTime.now())){
             throw new NotFoundException("Exam has already finished");

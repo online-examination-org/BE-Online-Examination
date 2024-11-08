@@ -12,8 +12,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ExamResultCreateRequest {
-    @NotNull(message = "Exam id is required")
-    private Long examId;
+    @NotNull(message = "Passcode is required")
+    private String passcode;
     @NotNull(message = "Student is required")
     private String studentId;
     @NotBlank(message = "Name is required")

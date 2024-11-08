@@ -45,7 +45,6 @@ public class ExamService {
                 () -> new NotFoundException("Teacher not found with id: " + teacherId));
         exam.setPasscode(randomCode());
         exam.setTeacher(teacher);
-        exam.setIsActive(true);
         examRepository.save(exam);
         return ExamMapper.INSTANCE.toExamCreateResponse(exam);
     }
