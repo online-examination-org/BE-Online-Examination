@@ -5,17 +5,24 @@ import com.team2.online_examination.contexts.TeacherContext;
 import com.team2.online_examination.contexts.UserContext;
 import com.team2.online_examination.dtos.JwtPayload;
 import com.team2.online_examination.dtos.TeacherJwtPayload;
+import com.team2.online_examination.dtos.requests.QuestionCreateRequest;
 import com.team2.online_examination.dtos.requests.TeacherLoginRequest;
 import com.team2.online_examination.dtos.requests.TeacherCreateRequest;
+import com.team2.online_examination.dtos.responses.ExamResultDetailResponse;
+import com.team2.online_examination.dtos.responses.QuestionResponse;
 import com.team2.online_examination.exceptions.GeneralErrorResponse;
 import com.team2.online_examination.dtos.JwtToken;
 import com.team2.online_examination.dtos.responses.TeacherCreateResponse;
 import com.team2.online_examination.exceptions.AuthenticationFailureException;
 import com.team2.online_examination.exceptions.EmailExistedException;
+import com.team2.online_examination.mappers.QuestionMapper;
 import com.team2.online_examination.mappers.TeacherMapper;
+import com.team2.online_examination.models.ExamResultDetail;
 import com.team2.online_examination.models.Teacher;
+import com.team2.online_examination.services.ExamResultDetailService;
 import com.team2.online_examination.services.TeacherService;
 import com.team2.online_examination.services.ExamService;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +30,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import com.team2.online_examination.models.Exam;
 
+import java.util.ArrayList;
 import java.util.List;
 @RestController
 
@@ -32,10 +40,13 @@ public class TeacherController {
     private final TeacherService teacherService;
     private final ExamService examService;
 
+    private final ExamResultDetailService examResultDetailService;
+
     @Autowired
-    public TeacherController(TeacherService teacherService,ExamService examService) {
+    public TeacherController(TeacherService teacherService,ExamService examService, ExamResultDetailService examResultDetailService) {
         this.teacherService = teacherService;
         this.examService = examService;
+        this.examResultDetailService = examResultDetailService;
     }
 
     @PostMapping("/signup")
@@ -85,6 +96,31 @@ public class TeacherController {
         Long teacher_id= teacher.getId();
         List <Exam> exams=  this.examService.getListExamByTeacherId(teacher_id);
         return ResponseEntity.ok(exams);
+    }
+
+    @Authorize(roles = {"teacher"})
+    @GetMapping("/result/detail")
+    public ResponseEntity<?> getExamResultDetail(@RequestParam @NotNull int examResultId,
+                                                 @RequestParam @NotNull String studentId) {
+        try {
+            TeacherContext teacherContext = UserContext.getUserAs(TeacherContext.class);
+            if (teacherContext == null) {
+                return ResponseEntity
+                        .status(HttpStatus.UNAUTHORIZED)
+                        .body(new GeneralErrorResponse("Invalid token"));
+            }
+            return ResponseEntity.ok(examResultDetailService.getExamResultDetailsByExamResultIdAndStudentId((long) examResultId, studentId));
+        }
+        catch (ResponseStatusException e) {
+            return ResponseEntity
+                    .status(e.getStatusCode())
+                    .body(new GeneralErrorResponse(e.getReason()));
+        }
+        catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new GeneralErrorResponse(e.getMessage()));
+        }
     }
 
     @Authorize(roles = {"teacher"})
