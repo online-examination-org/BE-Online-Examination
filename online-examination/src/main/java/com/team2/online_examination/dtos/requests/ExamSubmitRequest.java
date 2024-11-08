@@ -8,6 +8,5 @@ import java.time.LocalDateTime;
 @Data
 @Getter
 public class ExamSubmitRequest {
-    private Long exam_result_id;
     private LocalDateTime finish_at;
 }

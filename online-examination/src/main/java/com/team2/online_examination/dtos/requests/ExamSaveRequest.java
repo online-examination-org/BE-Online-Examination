@@ -9,8 +9,6 @@ import lombok.Setter;
 @Setter
 @Getter
 public class ExamSaveRequest {
-    private Long exam_result_id;
-
     @NotBlank(message = "Question Id is required")
     private Long question_id;
 
