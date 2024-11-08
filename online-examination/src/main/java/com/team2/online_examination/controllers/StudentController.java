@@ -57,10 +57,10 @@ public class StudentController {
             if(studentContext == null){
                 throw new BadRequestException("Student context is required");
             }
-            Long examResultId = examSaveRequest.getExam_result_id();
+            Long examResultId = studentContext.getExamResultId();
             Long questionId = examSaveRequest.getQuestion_id();
             String response = examSaveRequest.getResponse();
-            this.examResultDetailService.updateResponse(studentContext.getExamResultId(), questionId, response);
+            this.examResultDetailService.updateResponse(examResultId, questionId, response);
 
             return ResponseEntity.ok(null);
         } catch (ResponseStatusException e) {
@@ -83,9 +83,9 @@ public class StudentController {
             if(studentContext == null){
                 throw new BadRequestException("Student context is required");
             }
-            Long examResultId = examSubmitRequest.getExam_result_id();
+            Long examResultId = studentContext.getExamResultId();
             LocalDateTime finishAt = examSubmitRequest.getFinish_at();
-            this.examResultService.submit(studentContext.getExamResultId(), finishAt);
+            this.examResultService.submit(examResultId, finishAt);
 
             return ResponseEntity.ok(null);
 
