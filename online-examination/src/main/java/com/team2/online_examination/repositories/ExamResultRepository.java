@@ -10,5 +10,5 @@ import java.util.List;
 @Repository
 public interface ExamResultRepository extends JpaRepository<ExamResult, Long> {
     List<ExamResult> findAllByExam_ExamId(Long examId);
-
+    ExamResult findByExamResultId(Long examResultId);
 }

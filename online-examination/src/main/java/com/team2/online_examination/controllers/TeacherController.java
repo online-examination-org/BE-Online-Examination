@@ -105,8 +105,7 @@ public class TeacherController {
     @SecurityRequirement(name = "Bearer Authentication")
     @Authorize(roles = {"teacher"})
     @GetMapping("/result/detail")
-    public ResponseEntity<?> getExamResultDetail(@RequestParam @NotNull int examResultId,
-                                                 @RequestParam @NotNull String studentId) {
+    public ResponseEntity<?> getExamResultDetail(@RequestParam @NotNull int examResultId) {
         try {
             TeacherContext teacherContext = UserContext.getUserAs(TeacherContext.class);
             if (teacherContext == null) {
@@ -114,7 +113,7 @@ public class TeacherController {
                         .status(HttpStatus.UNAUTHORIZED)
                         .body(new GeneralErrorResponse("Invalid token"));
             }
-            return ResponseEntity.ok(examResultDetailService.getExamResultDetailsByExamResultIdAndStudentId((long) examResultId, studentId));
+            return ResponseEntity.ok(examResultDetailService.getExamResultDetailsByExamResultIdAndStudentId((long) examResultId));
         }
         catch (ResponseStatusException e) {
             return ResponseEntity

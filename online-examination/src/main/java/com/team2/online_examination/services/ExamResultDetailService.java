@@ -95,9 +95,11 @@ public class ExamResultDetailService {
         return examResultDetailRepository.findByExamResult_ExamResultId(examResultId);
     }
 
-    public List<ExamResultDetailResponse> getExamResultDetailsByExamResultIdAndStudentId(Long examResultId, String studentId) {
+    public List<ExamResultDetailResponse> getExamResultDetailsByExamResultIdAndStudentId(Long examResultId) {
         List<ExamResultDetail> examResultDetails = this.getExamResultDetailsByExamResultId(examResultId);
-        List<ExamResultDetailResponse> examResultDetailResponses = new ArrayList<>();;
+        ExamResult examResult = examResultRepository.findByExamResultId(examResultId);
+        String studentId = examResult.getStudentId();
+        List<ExamResultDetailResponse> examResultDetailResponses = new ArrayList<>();
         for (ExamResultDetail examResultDetail:examResultDetails) {
             if (examResultDetail.getExamResult().getStudentId().equals(studentId)) {
                 ExamResultDetailResponse examResultDetailResponse = new ExamResultDetailResponse();
