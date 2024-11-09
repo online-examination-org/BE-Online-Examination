@@ -4,6 +4,7 @@ import com.github.f4b6a3.uuid.UuidCreator;
 import com.team2.online_examination.dtos.requests.ExamCreateRequest;
 import com.team2.online_examination.dtos.requests.ExamUpdateRequest;
 import com.team2.online_examination.dtos.responses.ExamCreateResponse;
+import com.team2.online_examination.dtos.responses.ExamUpdateResponse;
 import com.team2.online_examination.exceptions.NotFoundException;
 import com.team2.online_examination.exceptions.BadRequest;
 import com.team2.online_examination.mappers.ExamMapper;
@@ -49,7 +50,7 @@ public class ExamService {
         return ExamMapper.INSTANCE.toExamCreateResponse(exam);
     }
 
-    public void updateExam(ExamUpdateRequest examUpdateRequest, Long teacherId, Long id) throws NotFoundException {
+    public ExamUpdateResponse updateExam(ExamUpdateRequest examUpdateRequest, Long teacherId, Long id) throws NotFoundException {
         Exam updateExam = ExamMapper.INSTANCE.toExam(examUpdateRequest);
         Exam exam = examRepository.findById(id).orElseThrow(
                 () -> new NotFoundException("Exam not found with id: " + id));
@@ -66,6 +67,7 @@ public class ExamService {
         exam.setIsActive(updateExam.getIsActive() != null ? updateExam.getIsActive() : exam.getIsActive());
         exam.setDescription(updateExam.getDescription() != null ? updateExam.getDescription() : exam.getDescription());
         examRepository.save(exam);
+        return ExamMapper.INSTANCE.toExamUpdateResponse(exam);
     }
 
     public List<Exam> getListExamByTeacherId(Long teacherId) {

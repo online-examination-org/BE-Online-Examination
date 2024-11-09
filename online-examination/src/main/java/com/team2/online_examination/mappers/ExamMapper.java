@@ -4,6 +4,7 @@ import com.team2.online_examination.dtos.requests.ExamCreateRequest;
 import com.team2.online_examination.dtos.requests.ExamUpdateRequest;
 import com.team2.online_examination.dtos.responses.ExamCreateResponse;
 import com.team2.online_examination.dtos.responses.ExamGetResponse;
+import com.team2.online_examination.dtos.responses.ExamUpdateResponse;
 import com.team2.online_examination.models.Exam;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
@@ -14,7 +15,8 @@ public interface ExamMapper {
 
     Exam toExam(ExamCreateRequest request);
     ExamCreateResponse toExamCreateResponse(Exam exam);
-
+    ExamUpdateResponse toExamUpdateResponse(Exam exam);
     Exam toExam(ExamUpdateRequest examUpdateRequest);
     ExamGetResponse toExamGetResponse(Exam exam);
+
 }
