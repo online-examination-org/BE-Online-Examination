@@ -112,7 +112,8 @@ public class ExamResultService {
         return examResultUpdateResponseList;
     }
     public List<ExamResult> getAllExamResultByExamId(Long examId) {
-        return examResultRepository.findAllByExam_ExamId(examId);
+        LocalDateTime now = LocalDateTime.now();
+        return examResultRepository.findAllByExam_ExamId(examId,now);
     }
 
     public void submit(Long examResultId, LocalDateTime finishAt) throws NotFoundException, BadRequestException {
@@ -144,7 +145,9 @@ public class ExamResultService {
         }
 
         // Update score and finishedAt
-        float percentageScore = (totalScore / questions.size()) * 100;
+        float percentageScore = Math.round(
+                (totalScore / (float) questions.size()) * 100 * 100
+        ) / 100.0f;
         examResult.setScore(percentageScore);
         examResult.setFinishedAt(finishAt != null && finishAt.isBefore(LocalDateTime.ofInstant(Instant.now(), ZoneOffset.UTC)) ? finishAt : LocalDateTime.ofInstant(Instant.now(), ZoneOffset.UTC));
 

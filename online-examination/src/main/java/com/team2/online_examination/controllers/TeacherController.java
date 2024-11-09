@@ -96,17 +96,20 @@ public class TeacherController {
     @Authorize(roles = {"teacher"})
     @GetMapping("/exams")
     public ResponseEntity<?> getExamsByTeacherId() {
-        TeacherContext teacher = UserContext.getUserAs(TeacherContext.class);
-        Long teacher_id= teacher.getId();
-        List <Exam> exams=  this.examService.getListExamByTeacherId(teacher_id);
-        return ResponseEntity.ok(exams);
+        try {
+            TeacherContext teacher = UserContext.getUserAs(TeacherContext.class);
+            Long teacher_id = teacher.getId();
+            List<Exam> exams = this.examService.getListExamByTeacherId(teacher_id);
+            return ResponseEntity.ok(exams);
+        }catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @SecurityRequirement(name = "Bearer Authentication")
     @Authorize(roles = {"teacher"})
     @GetMapping("/result/detail")
-    public ResponseEntity<?> getExamResultDetail(@RequestParam @NotNull int examResultId,
-                                                 @RequestParam @NotNull String studentId) {
+    public ResponseEntity<?> getExamResultDetail(@RequestParam @NotNull int examResultId) {
         try {
             TeacherContext teacherContext = UserContext.getUserAs(TeacherContext.class);
             if (teacherContext == null) {
@@ -114,7 +117,7 @@ public class TeacherController {
                         .status(HttpStatus.UNAUTHORIZED)
                         .body(new GeneralErrorResponse("Invalid token"));
             }
-            return ResponseEntity.ok(examResultDetailService.getExamResultDetailsByExamResultIdAndStudentId((long) examResultId, studentId));
+            return ResponseEntity.ok(examResultDetailService.getExamResultDetailsByExamResultIdAndStudentId((long) examResultId));
         }
         catch (ResponseStatusException e) {
             return ResponseEntity
