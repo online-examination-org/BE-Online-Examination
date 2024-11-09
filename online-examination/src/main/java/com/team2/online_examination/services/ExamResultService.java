@@ -108,7 +108,8 @@ public class ExamResultService {
         return examResultUpdateResponseList;
     }
     public List<ExamResult> getAllExamResultByExamId(Long examId) {
-        return examResultRepository.findAllByExam_ExamId(examId);
+        LocalDateTime now = LocalDateTime.now();
+        return examResultRepository.findAllByExam_ExamId(examId,now);
     }
 
     public void submit(Long examResultId, LocalDateTime finishAt) throws NotFoundException, BadRequestException {
