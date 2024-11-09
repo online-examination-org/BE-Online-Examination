@@ -12,4 +12,6 @@ import java.util.List;
 public interface ExamResultRepository extends JpaRepository<ExamResult, Long> {
     @Query("SELECT er FROM ExamResult er WHERE er.exam.examId = :examId AND (er.exam.endTime < :currentTime OR er.finishedAt IS NOT NULL)")
     List<ExamResult> findAllByExam_ExamId( Long examId,  LocalDateTime currentTime);
+    ExamResult findByExamResultId(Long examResultId);
+
 }
