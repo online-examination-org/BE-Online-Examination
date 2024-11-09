@@ -17,7 +17,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.UUID;
 
 import java.util.List;
@@ -54,7 +56,7 @@ public class ExamService {
         Exam updateExam = ExamMapper.INSTANCE.toExam(examUpdateRequest);
         Exam exam = examRepository.findById(id).orElseThrow(
                 () -> new NotFoundException("Exam not found with id: " + id));
-        if (exam.getStartTime().isBefore(LocalDateTime.now())) {
+        if (exam.getStartTime().isBefore(LocalDateTime.ofInstant(Instant.now(), ZoneOffset.UTC))) {
             throw new NotFoundException("Exam is already started");
         }
         if (!exam.getTeacher().getId().equals(teacherId)) {

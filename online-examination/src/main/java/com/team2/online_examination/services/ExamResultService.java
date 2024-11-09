@@ -23,7 +23,9 @@ import com.team2.online_examination.utils.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Objects;
 
@@ -57,9 +59,10 @@ public class ExamResultService {
         if(!exam.getIsActive()){
             throw new NotFoundException("Exam not found with passcode: " + examResultCreateRequest.getPasscode());
         }
-        if(exam.getEndTime().isBefore(LocalDateTime.now())){
+        if(exam.getEndTime().isBefore(LocalDateTime.ofInstant(Instant.now(), ZoneOffset.UTC))){
             throw new NotFoundException("Exam has already finished");
         }
+
         examResult.setExam(exam);
         examResultRepository.save(examResult);
         ExamResultCreateResponse examCreateResponse = ExamResultMapper.INSTANCE.toExamResultCreateResponse(examResult);
@@ -77,11 +80,11 @@ public class ExamResultService {
             throw new NotFoundException("Exam result not found with id: " + id);
         }
         if (examResult.getStartedAt() != null) {
-            if (examResult.getStartedAt().isAfter(LocalDateTime.now())) {
+            if (examResult.getStartedAt().isAfter(LocalDateTime.ofInstant(Instant.now(), ZoneOffset.UTC))) {
                 throw new BadRequestException("Exam has not started yet");
             }
         }
-        if(examResult.getExam().getEndTime()!=null&&examResult.getExam().getEndTime().isBefore(LocalDateTime.now())){
+        if(examResult.getExam().getEndTime()!=null&&examResult.getExam().getEndTime().isBefore(LocalDateTime.ofInstant(Instant.now(), ZoneOffset.UTC))){
             throw new BadRequestException("Exam has already finished");
         }
         if(!examResult.getExam().getIsActive()){
@@ -105,6 +108,7 @@ public class ExamResultService {
                 }
             }
         }
+        System.out.println(id);
         return examResultUpdateResponseList;
     }
     public List<ExamResult> getAllExamResultByExamId(Long examId) {
@@ -142,7 +146,7 @@ public class ExamResultService {
         // Update score and finishedAt
         float percentageScore = (totalScore / questions.size()) * 100;
         examResult.setScore(percentageScore);
-        examResult.setFinishedAt(finishAt != null && finishAt.isBefore(LocalDateTime.now()) ? finishAt : LocalDateTime.now());
+        examResult.setFinishedAt(finishAt != null && finishAt.isBefore(LocalDateTime.ofInstant(Instant.now(), ZoneOffset.UTC)) ? finishAt : LocalDateTime.ofInstant(Instant.now(), ZoneOffset.UTC));
 
         // Save submission
         examResultRepository.save(examResult);
