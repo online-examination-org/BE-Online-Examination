@@ -109,7 +109,11 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-validation</artifactId>
 		</dependency>
-
+<!--		<dependency>-->
+<!--			<groupId>com.zaxxer</groupId>-->
+<!--			<artifactId>HikariCP</artifactId>-->
+<!--			<version>6.0.0</version>-->
+<!--		</dependency>-->
 
 
 	</dependencies>
