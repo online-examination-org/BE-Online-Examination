@@ -57,8 +57,7 @@ public class ExamController {
             if(teacherContext == null){
                 return ResponseEntity.badRequest().body("Teacher context is required");
             }
-            this.examService.updateExam(examUpdateRequest, teacherContext.getId(),id);
-            return ResponseEntity.ok("Exam updated successfully");
+            return ResponseEntity.ok(this.examService.updateExam(examUpdateRequest, teacherContext.getId(),id));
         } catch (Exception e) {
             if(e instanceof NotFoundException){
                 return ResponseEntity.badRequest().body(e.getMessage());
