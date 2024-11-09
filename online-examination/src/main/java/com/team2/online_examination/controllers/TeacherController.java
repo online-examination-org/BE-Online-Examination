@@ -96,10 +96,14 @@ public class TeacherController {
     @Authorize(roles = {"teacher"})
     @GetMapping("/exams")
     public ResponseEntity<?> getExamsByTeacherId() {
-        TeacherContext teacher = UserContext.getUserAs(TeacherContext.class);
-        Long teacher_id= teacher.getId();
-        List <Exam> exams=  this.examService.getListExamByTeacherId(teacher_id);
-        return ResponseEntity.ok(exams);
+        try {
+            TeacherContext teacher = UserContext.getUserAs(TeacherContext.class);
+            Long teacher_id = teacher.getId();
+            List<Exam> exams = this.examService.getListExamByTeacherId(teacher_id);
+            return ResponseEntity.ok(exams);
+        }catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @SecurityRequirement(name = "Bearer Authentication")
